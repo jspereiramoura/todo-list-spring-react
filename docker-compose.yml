@@ -1,0 +1,38 @@
+name: todolist
+
+services:
+  db:
+    image: postgres
+    restart: always
+    networks:
+      - todolist-net
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - todolist-db:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+  client:
+    build: 
+      context: ./frontend
+    ports:
+      - 3001:80
+    networks:
+    - todolist-net
+  server:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    networks:
+      - todolist-net
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+
+volumes:
+  todolist-db:
+networks:
+  todolist-net:
+    driver: bridge
