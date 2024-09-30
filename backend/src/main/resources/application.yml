@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: TodoList
+
+  datasource:
+    url: jdbc:${DB_URL}
+    password: ${DB_PASS}
+    username: ${DB_USER}
