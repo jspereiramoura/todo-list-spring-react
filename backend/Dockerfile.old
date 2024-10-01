@@ -1,0 +1,19 @@
+FROM openjdk:17-jdk-slim AS builder
+WORKDIR /builder
+COPY . /builder
+RUN chmod +x ./gradlew
+RUN ./gradlew build -x test --no-daemon
+
+FROM openjdk:17-jdk-slim AS extract
+WORKDIR /extract
+ARG JAR_FILE=/builder/build/libs/*.jar
+COPY --from=builder ${JAR_FILE} application.jar
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+
+FROM openjdk:17-jdk-slim
+WORKDIR /application
+COPY --from=extract /extract/extracted/dependencies/ ./
+COPY --from=extract /extract/extracted/spring-boot-loader/ ./
+COPY --from=extract /extract/extracted/snapshot-dependencies/ ./
+COPY --from=extract /extract/extracted/application/ ./
+ENTRYPOINT ["java", "-jar", "application.jar"]

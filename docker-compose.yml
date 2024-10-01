@@ -12,6 +12,12 @@ services:
     volumes:
       - todolist-db:/var/lib/postgresql/data
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   client:
     build: 
       context: ./frontend
@@ -23,7 +29,8 @@ services:
     build:
       context: ./backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - todolist-net
     env_file:
