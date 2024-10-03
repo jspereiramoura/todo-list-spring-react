@@ -14,7 +14,13 @@ function App() {
         <AddItemInput />
       </div>
       <div>
-        {data?.map(item => <TodoItem description={item.description} />)}
+        {data?.map(item => (
+          <TodoItem
+            id={item.id}
+            description={item.description}
+            completed={item.completed}
+          />
+        ))}
       </div>
     </main>
   );

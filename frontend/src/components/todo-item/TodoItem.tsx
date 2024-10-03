@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useSetStatusMutation } from "../../app/apis/todoItem.api";
+import { TodoItemModel } from "../../app/models/TodoItem.model";
 import cn from "../../utils/classnames";
 
-type TodoItemProps = {
-  description: string;
-};
-
-export default function TodoItem({ description }: TodoItemProps) {
-  const [isChecked, setIsChecked] = useState(false);
+export default function TodoItem({
+  id,
+  description,
+  completed
+}: TodoItemModel) {
+  const [updateStatus] = useSetStatusMutation();
 
   return (
     <label className="w-full h-10 flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer select-none hover:bg-blue-50">
@@ -19,7 +20,10 @@ export default function TodoItem({ description }: TodoItemProps) {
           checked:border-blue-500 checked:bg-blue-500
           peer
         "
-          onChange={e => setIsChecked(e.target.checked)}
+          checked={completed}
+          onChange={e => {
+            updateStatus({ id, status: e.target.checked });
+          }}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +44,7 @@ export default function TodoItem({ description }: TodoItemProps) {
       </div>
       <span
         className={cn("relative", {
-          "line-through": isChecked
+          "line-through": completed
         })}
       >
         {description}

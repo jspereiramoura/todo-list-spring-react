@@ -10,6 +10,14 @@ export const todoItemApi = createApi({
       query: () => "/",
       providesTags: ["TODO_ITEM"]
     }),
+    setStatus: builder.mutation({
+      query: (item: { id: number; status: boolean }) => ({
+        url: `/${item.id}`,
+        method: "PUT",
+        body: { status: item.status }
+      }),
+      invalidatesTags: ["TODO_ITEM"]
+    }),
     createNewTodoItem: builder.mutation<TodoItemModel, Partial<TodoItemModel>>({
       query: (newItem: TodoItemModel) => ({
         url: "/",
@@ -21,5 +29,5 @@ export const todoItemApi = createApi({
   })
 });
 
-export const { useGetTodoItemsQuery, useCreateNewTodoItemMutation } =
+export const { useGetTodoItemsQuery, useCreateNewTodoItemMutation, useSetStatusMutation } =
   todoItemApi;

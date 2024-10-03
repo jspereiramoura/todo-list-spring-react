@@ -2,6 +2,7 @@ package br.dev.jspereiramoura.todolist.core;
 
 import br.dev.jspereiramoura.todolist.core.dtos.TodoItemInput;
 import br.dev.jspereiramoura.todolist.core.dtos.TodoItemOutput;
+import br.dev.jspereiramoura.todolist.core.dtos.UpdateItemStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +34,9 @@ public class TodoItemController {
     return  ResponseEntity.ok(service.findById(id));
   }
 
-  @PutMapping("/{id}/completed")
-  ResponseEntity setCompleted(@PathVariable Long id) {
-    service.setCompleted(id);
+  @PutMapping("/{id}")
+  ResponseEntity update(@PathVariable Long id, @RequestBody UpdateItemStatusDto dto) {
+    service.update(id,dto);
     return ResponseEntity.noContent().build();
   }
 }

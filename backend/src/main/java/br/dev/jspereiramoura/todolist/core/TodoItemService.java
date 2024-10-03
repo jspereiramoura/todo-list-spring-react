@@ -2,8 +2,12 @@ package br.dev.jspereiramoura.todolist.core;
 
 import br.dev.jspereiramoura.todolist.core.dtos.TodoItemInput;
 import br.dev.jspereiramoura.todolist.core.dtos.TodoItemOutput;
+import br.dev.jspereiramoura.todolist.core.dtos.UpdateItemStatusDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +23,8 @@ public class TodoItemService {
   }
 
   public List<TodoItemOutput> findAll() {
-    return repository.findAll().stream().map(TodoItemMapper::toDto).toList();
+    Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+    return repository.findAll(pageable).map(TodoItemMapper::toDto).toList();
   }
 
   public TodoItemOutput findById(Long id) {
@@ -30,8 +35,9 @@ public class TodoItemService {
     return TodoItemMapper.toDto(entity);
   }
 
-  public void setCompleted(Long id) {
+  public void update(Long id, UpdateItemStatusDto dto) {
     var entity = repository.getReferenceById(id);
-    entity.setCompleted(true);
+    entity.setCompleted(dto.status());
+    repository.save(entity);
   }
 }
